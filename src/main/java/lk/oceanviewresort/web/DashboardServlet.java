@@ -65,7 +65,113 @@ public class DashboardServlet extends HttpServlet {
             out.println("</ul>");
         }
 
-        out.println("<script src='" + ctx + "/assets/app.js'></script>");
+        // --- Room Availability widget (insert after app.js builds layout) ---
+        out.println("<script>");
+        out.println("window.addEventListener('load', function(){");
+        out.println("  setTimeout(function(){");
+
+        out.println("    if(document.getElementById('dashCheckIn')) return;"); // stop duplicates
+
+        out.println("    var ctx = '" + ctx + "';");
+
+        out.println("    // Try to find the main content area created by app.js");
+        out.println("    var target = document.querySelector('.content-area') ||");
+        out.println("                 document.querySelector('.app-content') ||");
+        out.println("                 document.querySelector('.page-content') ||");
+        out.println("                 document.querySelector('.main-content') ||");
+        out.println("                 document.querySelector('.content') ||");
+        out.println("                 document.querySelector('main') ||");
+        out.println("                 document.querySelector('.container') || document.body;");
+
+        out.println("    var html = `");
+        out.println("    <div style='margin-top:16px; padding:14px; border:1px solid #cfeaff; border-radius:12px; background:#ffffff;'>");
+        out.println("      <h3 style='margin:0 0 6px 0; color:#0b4f86;'>Room Availability</h3>");
+        out.println("      <div style='font-size:13px; color:#4b6b7a; margin-bottom:10px;'>Select dates to see available room counts (by room type).</div>");
+        out.println("      <div style='display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;'>");
+        out.println("        <div>");
+        out.println("          <div style='font-size:12px; margin-bottom:4px;'>Check-In</div>");
+        out.println("          <input type='date' id='dashCheckIn' style='padding:8px; border:1px solid #cfeaff; border-radius:10px;'/>");
+        out.println("        </div>");
+        out.println("        <div>");
+        out.println("          <div style='font-size:12px; margin-bottom:4px;'>Check-Out</div>");
+        out.println("          <input type='date' id='dashCheckOut' style='padding:8px; border:1px solid #cfeaff; border-radius:10px;'/>");
+        out.println("        </div>");
+        out.println("        <button type='button' id='dashCheckBtn' style='padding:9px 14px; border:none; border-radius:10px; background:#2aa7ff; color:white; cursor:pointer;'>Check</button>");
+        out.println("      </div>");
+        out.println("      <div id='dashAvailMsg' style='display:none; margin-top:10px; padding:10px; border-radius:10px; background:#fff0f0; border:1px solid #ffcccc; color:#7a1c1c; font-size:13px;'></div>");
+        out.println("      <div id='dashAvailGrid' style='margin-top:12px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;'></div>");
+        out.println("    </div>`;");
+
+        out.println("    target.insertAdjacentHTML('beforeend', html);");
+
+        out.println("    function pad(n){ return (n<10?'0':'')+n; }");
+        out.println("    function setDefaultDates(){");
+        out.println("      var d=new Date();");
+        out.println("      var today=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());");
+        out.println("      d.setDate(d.getDate()+1);");
+        out.println("      var tom=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());");
+        out.println("      document.getElementById('dashCheckIn').value=today;");
+        out.println("      document.getElementById('dashCheckOut').value=tom;");
+        out.println("    }");
+
+        out.println("    function showMsg(text){");
+        out.println("      var box=document.getElementById('dashAvailMsg');");
+        out.println("      box.style.display='block';");
+        out.println("      box.innerHTML=text;");
+        out.println("    }");
+
+        out.println("    function clearMsg(){");
+        out.println("      var box=document.getElementById('dashAvailMsg');");
+        out.println("      box.style.display='none';");
+        out.println("      box.innerHTML='';");
+        out.println("    }");
+
+        out.println("    function esc(t){");
+        out.println("      if(!t) return '';");
+        out.println("      return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');");
+        out.println("    }");
+
+        out.println("    function renderRooms(rooms){");
+        out.println("      var grid=document.getElementById('dashAvailGrid');");
+        out.println("      grid.innerHTML='';");
+        out.println("      if(!rooms || rooms.length===0){ showMsg('No room types found.'); return; }");
+        out.println("      rooms.forEach(function(r){");
+        out.println("        var div=document.createElement('div');");
+        out.println("        div.style.border='1px solid ' + (r.status==='FULLY_BOOKED' ? '#ffcccc' : '#cfeaff');");
+        out.println("        div.style.background=(r.status==='FULLY_BOOKED' ? '#fff6f6' : '#ffffff');");
+        out.println("        div.style.borderRadius='12px';");
+        out.println("        div.style.padding='12px';");
+        out.println("        div.innerHTML =");
+        out.println("          \"<div style='font-weight:bold; color:#0b4f86; margin-bottom:6px;'>\"+esc(r.roomType)+\"</div>\" +");
+        out.println("          \"<div style='font-size:12px; color:#4b6b7a;'>Total: \"+r.total+\" | Booked: \"+r.booked+\"</div>\" +");
+        out.println("          \"<div style='font-size:26px; font-weight:bold; margin-top:8px; color:#0b4f86;'>\"+r.available+\"</div>\" +");
+        out.println("          \"<div style='font-size:12px; color:#4b6b7a;'>\"+(r.status==='FULLY_BOOKED'?'Fully Booked':'Available')+\"</div>\";");
+        out.println("        grid.appendChild(div);");
+        out.println("      });");
+        out.println("    }");
+
+        out.println("    function loadAvailability(){");
+        out.println("      clearMsg();");
+        out.println("      var ci=document.getElementById('dashCheckIn').value;");
+        out.println("      var co=document.getElementById('dashCheckOut').value;");
+        out.println("      if(!ci || !co){ showMsg('Please select check-in and check-out dates.'); return; }");
+        out.println("      fetch(ctx + '/app/availability?checkIn=' + encodeURIComponent(ci) + '&checkOut=' + encodeURIComponent(co))");
+        out.println("        .then(function(res){ return res.json(); })");
+        out.println("        .then(function(data){");
+        out.println("          if(!data.ok){ showMsg('Error: ' + (data.message||'UNKNOWN')); return; }");
+        out.println("          renderRooms(data.rooms);");
+        out.println("        })");
+        out.println("        .catch(function(){ showMsg('Error loading availability.'); });");
+        out.println("    }");
+
+        out.println("    setDefaultDates();");
+        out.println("    loadAvailability();");
+        out.println("    document.getElementById('dashCheckBtn').addEventListener('click', loadAvailability);");
+
+        out.println("  }, 250);"); // wait a bit for app.js layout
+        out.println("});");
+        out.println("</script>");
+
         out.println("</body></html>");
 
     }
