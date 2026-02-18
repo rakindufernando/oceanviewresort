@@ -73,6 +73,48 @@ public class DashboardServlet extends HttpServlet {
         out.println("    if(document.getElementById('dashCheckIn')) return;"); // stop duplicates
 
         out.println("    var ctx = '" + ctx + "';");
+        out.println("  function money(v){");
+        out.println("    v = Number(v || 0);");
+        out.println("    return 'LKR ' + v.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});");
+        out.println("  }");
+
+        out.println("  function loadIncomeStats(){");
+        out.println("    var a = document.getElementById('incToday');");
+        out.println("    var b = document.getElementById('txToday');");
+        out.println("    var c = document.getElementById('incMonth');");
+        out.println("    var d = document.getElementById('txMonth');");
+        out.println("    if(!a || !b || !c || !d) return;");
+
+        out.println("    fetch(ctx + '/app/income-stats')");
+        out.println("      .then(function(res){ return res.json(); })");
+        out.println("      .then(function(data){");
+        out.println("        if(!data.ok){");
+        out.println("          a.innerText = money(0); b.innerText = '0'; c.innerText = money(0); d.innerText = '0';");
+        out.println("          return;");
+        out.println("        }");
+        out.println("        a.innerText = money(data.todayTotal);");
+        out.println("        b.innerText = String(data.todayCount || 0);");
+        out.println("        c.innerText = money(data.monthTotal);");
+        out.println("        d.innerText = String(data.monthCount || 0);");
+        out.println("      })");
+        out.println("      .catch(function(){");
+        out.println("        a.innerText = money(0); b.innerText = '0'; c.innerText = money(0); d.innerText = '0';");
+        out.println("      });");
+        out.println("  }");
+
+        out.println("  function loadTodayIncome(){");
+        out.println("    var el = document.getElementById('todayIncomeVal');");
+        out.println("    if(!el) return;");
+        out.println("    fetch(ctx + '/app/today-income')");
+        out.println("      .then(function(res){ return res.json(); })");
+        out.println("      .then(function(data){");
+        out.println("        if(!data.ok){ el.innerText = 'LKR 0.00'; return; }");
+        out.println("        var v = Number(data.total || 0);");
+        out.println("        el.innerText = 'LKR ' + v.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});");
+        out.println("      })");
+        out.println("      .catch(function(){ el.innerText = 'LKR 0.00'; });");
+        out.println("  }");
+
 
         out.println("    // Try to find the main content area created by app.js");
         out.println("    var target = document.querySelector('.content-area') ||");
@@ -87,6 +129,38 @@ public class DashboardServlet extends HttpServlet {
         out.println("    <div style='margin-top:16px; padding:14px; border:1px solid #cfeaff; border-radius:12px; background:#ffffff;'>");
         out.println("      <h3 style='margin:0 0 6px 0; color:#0b4f86;'>Room Availability</h3>");
         out.println("      <div style='font-size:13px; color:#4b6b7a; margin-bottom:10px;'>Select dates to see available room counts (by room type).</div>");
+        // --- Income Summary (Today + This Month) ---
+        out.println("<div style='margin:10px 0 14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;'>");
+
+        out.println("  <div style='padding:12px; border:1px solid #cfeaff; border-radius:12px; background:#ffffff;'>");
+        out.println("    <div style='font-size:12px; color:#4b6b7a;'>Today's Income</div>");
+        out.println("    <div id='incToday' style='font-size:20px; font-weight:bold; color:#0b4f86; margin-top:6px;'>Loading...</div>");
+        out.println("  </div>");
+
+        out.println("  <div style='padding:12px; border:1px solid #cfeaff; border-radius:12px; background:#ffffff;'>");
+        out.println("    <div style='font-size:12px; color:#4b6b7a;'>Today's Transactions</div>");
+        out.println("    <div id='txToday' style='font-size:20px; font-weight:bold; color:#0b4f86; margin-top:6px;'>Loading...</div>");
+        out.println("  </div>");
+
+        out.println("  <div style='padding:12px; border:1px solid #cfeaff; border-radius:12px; background:#ffffff;'>");
+        out.println("    <div style='font-size:12px; color:#4b6b7a;'>This Month Income</div>");
+        out.println("    <div id='incMonth' style='font-size:20px; font-weight:bold; color:#0b4f86; margin-top:6px;'>Loading...</div>");
+        out.println("  </div>");
+
+        out.println("  <div style='padding:12px; border:1px solid #cfeaff; border-radius:12px; background:#ffffff;'>");
+        out.println("    <div style='font-size:12px; color:#4b6b7a;'>This Month Transactions</div>");
+        out.println("    <div id='txMonth' style='font-size:20px; font-weight:bold; color:#0b4f86; margin-top:6px;'>Loading...</div>");
+        out.println("  </div>");
+
+        out.println("</div>");
+
+        out.println("  <div style='margin:10px 0 14px; padding:10px; border:1px dashed #cfeaff; border-radius:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;'>");
+        out.println("    <div>");
+        out.println("      <div style='font-size:12px; color:#4b6b7a;'>Today's Total Income</div>");
+        out.println("      <div id='todayIncomeVal' style='font-size:22px; font-weight:bold; color:#0b4f86;'>Loading...</div>");
+        out.println("    </div>");
+        out.println("    <div style='font-size:12px; color:#4b6b7a;'>Sum of payments received today</div>");
+        out.println("  </div>");
         out.println("      <div style='display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;'>");
         out.println("        <div>");
         out.println("          <div style='font-size:12px; margin-bottom:4px;'>Check-In</div>");
@@ -106,6 +180,8 @@ public class DashboardServlet extends HttpServlet {
 
         out.println("    function pad(n){ return (n<10?'0':'')+n; }");
         out.println("    function setDefaultDates(){");
+        out.println("  loadTodayIncome();");
+        out.println("  loadIncomeStats();");
         out.println("      var d=new Date();");
         out.println("      var today=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());");
         out.println("      d.setDate(d.getDate()+1);");
