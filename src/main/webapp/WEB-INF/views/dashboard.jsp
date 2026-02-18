@@ -49,6 +49,11 @@
             <p class="small">Calculate bill and print invoice.</p>
             <a class="btn" href="<%= ctx %>/app/reception/billing">Open</a>
         </div>
+        <div class="col card">
+            <h3>Early Checkout</h3>
+            <p class="small">Update actual checkout date and mark reservation as checked out.</p>
+            <a class="btn" href="<%= ctx %>/app/reception/checkout">Open</a>
+        </div>
     </div>
 
     <% } else if ("MANAGER".equals(role)) { %>

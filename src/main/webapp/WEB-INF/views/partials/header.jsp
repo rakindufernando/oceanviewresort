@@ -40,14 +40,16 @@
         <%
             if ("RECEPTIONIST".equals(role)) {
         %>
-        <a href="<%= ctx %>/app/reception/guests">Guests</a>
-        <a href="<%= ctx %>/app/reception/reservations">Reservations</a>
-        <a href="<%= ctx %>/app/reception/billing">Billing</a>
+        <a href="<%= ctx %>/app/reception/guests">Guest Management</a>
+        <a href="<%= ctx %>/app/reception/reservations">Reservation Management</a>
+        <a href="<%= ctx %>/app/reception/billing">Billing + Payments</a>
+        <a href="<%= ctx %>/app/reception/checkout">Early Checkout</a>
         <%
         } else if ("MANAGER".equals(role)) {
         %>
         <a href="<%= ctx %>/app/manager/reservations">Reservations</a>
         <a href="<%= ctx %>/app/manager/reports">Reports</a>
+        <a href="<%= ctx %>/app/reception/checkout">Checkout</a>
         <%
         } else if ("ADMIN".equals(role)) {
         %>

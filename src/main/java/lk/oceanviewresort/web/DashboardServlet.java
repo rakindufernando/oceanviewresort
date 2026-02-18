@@ -46,6 +46,7 @@ public class DashboardServlet extends HttpServlet {
             out.println("<li><a href='" + req.getContextPath() + "/app/reception/guests'>Guest Management</a></li>");
             out.println("<li><a href='" + req.getContextPath() + "/app/reception/reservations'>Reservation Management</a></li>");
             out.println("<li><a href='" + req.getContextPath() + "/app/reception/billing'>Billing + Payments</a></li>");
+            out.println("<li><a href='" + req.getContextPath() + "/app/reception/checkout'>Early Checkout</a></li>");
             out.println("</ul>");
         }
 
