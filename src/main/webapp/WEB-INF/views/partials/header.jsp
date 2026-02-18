@@ -35,7 +35,7 @@
     %>
     <nav>
         <a href="<%= ctx %>/app/dashboard">Dashboard</a>
-        <a href="<%= ctx %>/app/help">Help</a>
+
 
         <%
             if ("RECEPTIONIST".equals(role)) {
@@ -47,9 +47,9 @@
         <%
         } else if ("MANAGER".equals(role)) {
         %>
-        <a href="<%= ctx %>/app/manager/reservations">Reservations</a>
+        <a href="<%= ctx %>/app/manager/reservations">View Reservations</a>
         <a href="<%= ctx %>/app/manager/reports">Reports</a>
-        <a href="<%= ctx %>/app/reception/checkout">Checkout</a>
+        <a href="<%= ctx %>/app/manager/roomtypes">Room Types & Prices</a>
         <%
         } else if ("ADMIN".equals(role)) {
         %>
@@ -60,6 +60,7 @@
         <%
             }
         %>
+        <a href="<%= ctx %>/app/help">Help</a>
     </nav>
     <%
         }

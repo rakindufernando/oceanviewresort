@@ -37,9 +37,7 @@ public class DashboardServlet extends HttpServlet {
         out.println("<p><a href='" + req.getContextPath() + "/logout'>Logout</a></p>");
         out.println("<hr>");
 
-        out.println("<h3>Common</h3><ul>");
-        out.println("<li><a href='" + req.getContextPath() + "/app/help'>Help</a></li>");
-        out.println("</ul>");
+
 
         if ("RECEPTIONIST".equals(role)) {
             out.println("<h3>Receptionist Functions</h3><ul>");
@@ -54,6 +52,7 @@ public class DashboardServlet extends HttpServlet {
             out.println("<h3>Manager Functions</h3><ul>");
             out.println("<li><a href='" + req.getContextPath() + "/app/manager/reservations'>View Reservations</a></li>");
             out.println("<li><a href='" + req.getContextPath() + "/app/manager/reports'>Reports</a></li>");
+            out.println("<li><a href='" + req.getContextPath() + "/app/manager/roomtypes'>Room Types & Prices</a></li>");
             out.println("</ul>");
         }
 
@@ -65,6 +64,10 @@ public class DashboardServlet extends HttpServlet {
             out.println("<li><a href='" + req.getContextPath() + "/app/admin/reports'>Reports</a></li>");
             out.println("</ul>");
         }
+
+        out.println("<h3>Common</h3><ul>");
+        out.println("<li><a href='" + req.getContextPath() + "/app/help'>Help</a></li>");
+        out.println("</ul>");
 
         // --- Room Availability widget (insert after app.js builds layout) ---
         out.println("<script>");
