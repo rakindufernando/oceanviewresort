@@ -26,6 +26,7 @@ public class DashboardServlet extends HttpServlet {
         out.println("<title>Dashboard</title>");
         out.println("<link rel='stylesheet' href='" + req.getContextPath() + "/assets/app.css'>");
         out.println("<script src='" + req.getContextPath() + "/assets/app.js' defer></script>");
+        out.println("<link rel='icon' type='image/png' href='" + req.getContextPath() + "/images/favicon.png'>");
         out.println("</head><body class='dashboard-servlet'>");
         out.println("<div class='container'>");
         out.println("<h1>Ocean View Resort - Dashboard</h1>");

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ include file="/WEB-INF/jsp/includes/favicon.jspf" %>
 <%
     String ctx = request.getContextPath();
     String err = (String) request.getAttribute("error");

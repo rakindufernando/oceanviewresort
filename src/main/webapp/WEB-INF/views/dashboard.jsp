@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ include file="/WEB-INF/jsp/includes/favicon.jspf" %>
+
 <%
     request.setAttribute("pageTitle", "Dashboard - Ocean View Resort");
     String ctx = request.getContextPath();

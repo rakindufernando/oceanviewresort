@@ -10,6 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= (request.getAttribute("pageTitle") != null ? request.getAttribute("pageTitle") : "Ocean View Resort") %></title>
     <link rel="stylesheet" href="<%= ctx %>/assets/app.css">
+    <link rel="icon" type="image/png" href="<%= ctx %>/images/favicon.png">
+
 </head>
 <body>
 <header>
