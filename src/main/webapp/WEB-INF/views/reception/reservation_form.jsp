@@ -66,7 +66,11 @@
       </div>
 
       <div class="col">
-        <label>Room Type</label>
+        <label>
+          Room Type
+          <span class="tip" tabindex="0"
+                data-tip="Room type decides the price per night and availability. Select a type first, then choose dates.">?</span>
+        </label>
         <select name="roomType" id="roomType" required onchange="checkAvailability()">
           <option value="">-- Select --</option>
           <%
@@ -86,12 +90,20 @@
 
     <div class="row">
       <div class="col">
-        <label>Check-In</label>
+        <label>
+          Check-In
+          <span class="tip" tabindex="0"
+                data-tip="Select the guest's arrival date. Availability is checked using your selected dates.">?</span>
+        </label>
         <input type="date" name="checkIn" id="checkIn" required onchange="checkAvailability()"
                value="<%= editing ? reservation.getCheckIn() : "" %>">
       </div>
       <div class="col">
-        <label>Check-Out</label>
+        <label>
+          Check-Out
+          <span class="tip" tabindex="0"
+                data-tip="Must be after Check-In. Number of nights is calculated using check-in and check-out dates.">?</span>
+        </label>
         <input type="date" name="checkOut" id="checkOut" required onchange="checkAvailability()"
                value="<%= editing ? reservation.getCheckOut() : "" %>">
       </div>
