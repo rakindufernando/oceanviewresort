@@ -187,4 +187,34 @@ public class GuestDAO {
 
         return list;
     }
+
+    public Guest findByMobileAndNic(String mobile, String nicPassport) {
+        String sql = "SELECT guest_id, full_name, address, mobile, nic_passport, email " +
+                "FROM guests WHERE is_deleted=0 AND mobile=? AND nic_passport=? LIMIT 1";
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, mobile);
+            ps.setString(2, nicPassport);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Guest g = new Guest();
+                    g.setGuestId(rs.getInt("guest_id"));
+                    g.setFullName(rs.getString("full_name"));
+                    g.setAddress(rs.getString("address"));
+                    g.setMobile(rs.getString("mobile"));
+                    g.setNicPassport(rs.getString("nic_passport"));
+                    g.setEmail(rs.getString("email"));
+                    return g;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

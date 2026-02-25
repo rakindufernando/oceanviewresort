@@ -7,6 +7,8 @@ public class Reservation {
     private String reservationNo;
     private int guestId;
     private String guestName;
+    private String guestMobile;
+    private String guestNicPassport;
     private String roomType;
     private LocalDate checkIn;
     private LocalDate checkOut;
@@ -25,6 +27,12 @@ public class Reservation {
 
     public String getGuestName() { return guestName; }
     public void setGuestName(String guestName) { this.guestName = guestName; }
+
+    public String getGuestMobile() { return guestMobile; }
+    public void setGuestMobile(String guestMobile) { this.guestMobile = guestMobile; }
+
+    public String getGuestNicPassport() { return guestNicPassport; }
+    public void setGuestNicPassport(String guestNicPassport) { this.guestNicPassport = guestNicPassport; }
 
     public String getRoomType() { return roomType; }
     public void setRoomType(String roomType) { this.roomType = roomType; }

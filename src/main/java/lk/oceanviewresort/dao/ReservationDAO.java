@@ -268,4 +268,126 @@ public class ReservationDAO {
             throw new SQLException(e.getMessage());
         }
     }
+
+    public Reservation findForGuestLookup(String reservationNo, String mobile, String nicPassport) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT r.reservation_id, r.reservation_no, r.guest_id, g.full_name AS guest_name, " +
+                        "g.mobile, g.nic_passport, r.room_type, r.check_in, r.check_out, r.adults, r.children, r.status " +
+                        "FROM reservations r JOIN guests g ON r.guest_id=g.guest_id " +
+                        "WHERE r.reservation_no=? "
+        );
+
+        boolean hasMobile = mobile != null && !mobile.trim().isEmpty();
+        boolean hasNic = nicPassport != null && !nicPassport.trim().isEmpty();
+
+        if (hasMobile) sql.append("AND g.mobile=? ");
+        if (hasNic) sql.append("AND g.nic_passport=? ");
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            int idx = 1;
+            ps.setString(idx++, reservationNo);
+
+            if (hasMobile) ps.setString(idx++, mobile.trim());
+            if (hasNic) ps.setString(idx++, nicPassport.trim());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Reservation r = new Reservation();
+                    r.setReservationId(rs.getInt("reservation_id"));
+                    r.setReservationNo(rs.getString("reservation_no"));
+                    r.setGuestId(rs.getInt("guest_id"));
+                    r.setGuestName(rs.getString("guest_name"));
+                    r.setGuestMobile(rs.getString("mobile"));
+                    r.setGuestNicPassport(rs.getString("nic_passport"));
+                    r.setRoomType(rs.getString("room_type"));
+                    r.setCheckIn(rs.getDate("check_in").toLocalDate());
+                    r.setCheckOut(rs.getDate("check_out").toLocalDate());
+                    r.setAdults(rs.getInt("adults"));
+                    r.setChildren(rs.getInt("children"));
+                    r.setStatus(rs.getString("status"));
+                    return r;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public Reservation findByReservationNoAndGuestId(String reservationNo, int guestId) {
+        String sql = "SELECT r.reservation_id, r.reservation_no, r.guest_id, g.full_name AS guest_name, " +
+                "g.mobile, g.nic_passport, r.room_type, r.check_in, r.check_out, r.adults, r.children, r.status " +
+                "FROM reservations r JOIN guests g ON r.guest_id=g.guest_id " +
+                "WHERE r.reservation_no=? AND r.guest_id=?";
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, reservationNo);
+            ps.setInt(2, guestId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Reservation r = new Reservation();
+                    r.setReservationId(rs.getInt("reservation_id"));
+                    r.setReservationNo(rs.getString("reservation_no"));
+                    r.setGuestId(rs.getInt("guest_id"));
+                    r.setGuestName(rs.getString("guest_name"));
+                    r.setGuestMobile(rs.getString("mobile"));
+                    r.setGuestNicPassport(rs.getString("nic_passport"));
+                    r.setRoomType(rs.getString("room_type"));
+                    r.setCheckIn(rs.getDate("check_in").toLocalDate());
+                    r.setCheckOut(rs.getDate("check_out").toLocalDate());
+                    r.setAdults(rs.getInt("adults"));
+                    r.setChildren(rs.getInt("children"));
+                    r.setStatus(rs.getString("status"));
+                    return r;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public List<Reservation> listByGuestId(int guestId) {
+        List<Reservation> list = new ArrayList<>();
+
+        String sql = "SELECT r.reservation_id, r.reservation_no, r.guest_id, g.full_name AS guest_name, " +
+                "r.room_type, r.check_in, r.check_out, r.status " +
+                "FROM reservations r JOIN guests g ON r.guest_id=g.guest_id " +
+                "WHERE r.guest_id=? ORDER BY r.reservation_id DESC";
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, guestId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Reservation r = new Reservation();
+                    r.setReservationId(rs.getInt("reservation_id"));
+                    r.setReservationNo(rs.getString("reservation_no"));
+                    r.setGuestId(rs.getInt("guest_id"));
+                    r.setGuestName(rs.getString("guest_name"));
+                    r.setRoomType(rs.getString("room_type"));
+                    r.setCheckIn(rs.getDate("check_in").toLocalDate());
+                    r.setCheckOut(rs.getDate("check_out").toLocalDate());
+                    r.setStatus(rs.getString("status"));
+                    list.add(r);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

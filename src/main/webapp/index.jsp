@@ -208,6 +208,29 @@
             z-index: 1;
         }
 
+        .hero .info-btn{
+            margin-left:10px;
+            border: none;
+            cursor: pointer;
+            padding: 12px 22px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.92);
+            color: var(--text);
+            font-weight: 800;
+            font-size: 15px;
+            min-width: 170px;
+        }
+        .hero .info-btn:active{ transform: translateY(1px); }
+
+        @media (max-width: 520px){
+            .hero .info-btn{
+                width: 100%;
+                max-width: 360px;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+
     </style>
 </head>
 
@@ -232,7 +255,8 @@
                 A simple system to manage guest details, reservations, and billing in one place.<br>
                 Click the login button to access the system.
             </p>
-            <button class="login-btn" id="loginMain">LOGIN</button>
+            <button class="login-btn" id="loginMain">STAFF LOGIN</button>
+            <button class="info-btn" id="bookingInfo">GUEST LOGIN</button>
         </div>
     </main>
 
@@ -307,6 +331,11 @@
 
         setInterval(showNext, 6000);
     })();
+
+        function goBookingInfo(){
+        window.location.href = "<%= request.getContextPath() %>/booking-info";
+    }
+        document.getElementById("bookingInfo").addEventListener("click", goBookingInfo);
 
 
 </script>
