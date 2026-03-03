@@ -51,6 +51,7 @@
         %>
         <a href="<%= ctx %>/app/manager/reservations">View Reservations</a>
         <a href="<%= ctx %>/app/manager/reports">Reports</a>
+        <a href="<%= ctx %>/app/manager/staff-activity">Staff Activity</a>
         <a href="<%= ctx %>/app/manager/roomtypes">Room Types & Prices</a>
         <%
         } else if ("ADMIN".equals(role)) {
@@ -59,6 +60,7 @@
         <a href="<%= ctx %>/app/admin/reservations">Delete Reservations</a>
         <a href="<%= ctx %>/app/admin/transactions">Transactions</a>
         <a href="<%= ctx %>/app/admin/reports">Reports</a>
+        <a href="<%= ctx %>/app/admin/staff-activity">Staff Activity</a>
         <%
             }
         %>

@@ -8,12 +8,22 @@ import java.io.PrintWriter;
 @WebServlet("/app/dashboard")
 public class DashboardServlet extends HttpServlet {
 
+    private String esc(String s) {
+        if (s == null) return "";
+        return s
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         HttpSession session = req.getSession(false);
-        String fullName = (String) session.getAttribute("fullName");
-        String role = (String) session.getAttribute("role");
+        String fullName = session != null ? (String) session.getAttribute("fullName") : "";
+        String role = session != null ? (String) session.getAttribute("role") : "";
 
         resp.setContentType("text/html; charset=UTF-8");
         PrintWriter out = resp.getWriter();
@@ -30,15 +40,13 @@ public class DashboardServlet extends HttpServlet {
         out.println("</head><body class='dashboard-servlet'>");
         out.println("<div class='container'>");
         out.println("<h1>Ocean View Resort - Dashboard</h1>");
-        out.println("<p>Welcome: " + fullName + " (" + role + ")</p>");
+        out.println("<p>Welcome: " + esc(fullName) + " (" + esc(role) + ")</p>");
 
         String err = req.getParameter("error");
-        if (err != null) out.println("<p style='color:red;'>" + err + "</p>");
+        if (err != null) out.println("<p class='err'>" + esc(err) + "</p>");
 
         out.println("<p><a href='" + req.getContextPath() + "/logout'>Logout</a></p>");
         out.println("<hr>");
-
-
 
         if ("RECEPTIONIST".equals(role)) {
             out.println("<h3>Receptionist Functions</h3><ul>");
@@ -53,6 +61,7 @@ public class DashboardServlet extends HttpServlet {
             out.println("<h3>Manager Functions</h3><ul>");
             out.println("<li><a href='" + req.getContextPath() + "/app/manager/reservations'>View Reservations</a></li>");
             out.println("<li><a href='" + req.getContextPath() + "/app/manager/reports'>Reports</a></li>");
+            out.println("<li><a href='" + req.getContextPath() + "/app/manager/staff-activity'>Staff Activity</a></li>");
             out.println("<li><a href='" + req.getContextPath() + "/app/manager/roomtypes'>Room Types & Prices</a></li>");
             out.println("</ul>");
         }
@@ -63,6 +72,7 @@ public class DashboardServlet extends HttpServlet {
             out.println("<li><a href='" + req.getContextPath() + "/app/admin/reservations'>Delete Reservations</a></li>");
             out.println("<li><a href='" + req.getContextPath() + "/app/admin/transactions'>Transactions</a></li>");
             out.println("<li><a href='" + req.getContextPath() + "/app/admin/reports'>Reports</a></li>");
+            out.println("<li><a href='" + req.getContextPath() + "/app/admin/staff-activity'>Staff Activity</a></li>");
             out.println("</ul>");
         }
 
@@ -70,12 +80,11 @@ public class DashboardServlet extends HttpServlet {
         out.println("<li><a href='" + req.getContextPath() + "/app/help'>Help</a></li>");
         out.println("</ul>");
 
-        // --- Room Availability widget (insert after app.js builds layout) ---
         out.println("<script>");
         out.println("window.addEventListener('load', function(){");
         out.println("  setTimeout(function(){");
 
-        out.println("    if(document.getElementById('dashCheckIn')) return;"); // stop duplicates
+        out.println("    if(document.getElementById('dashCheckIn')) return;");
 
         out.println("    var ctx = '" + ctx + "';");
         out.println("  function money(v){");
@@ -120,8 +129,6 @@ public class DashboardServlet extends HttpServlet {
         out.println("      .catch(function(){ el.innerText = 'LKR 0.00'; });");
         out.println("  }");
 
-
-        out.println("    // Try to find the main content area created by app.js");
         out.println("    var target = document.querySelector('.content-area') ||");
         out.println("                 document.querySelector('.app-content') ||");
         out.println("                 document.querySelector('.page-content') ||");
@@ -134,7 +141,7 @@ public class DashboardServlet extends HttpServlet {
         out.println("    <div style='margin-top:16px; padding:14px; border:1px solid #cfeaff; border-radius:12px; background:#ffffff;'>");
         out.println("      <h3 style='margin:0 0 6px 0; color:#0b4f86;'>Room Availability</h3>");
         out.println("      <div style='font-size:13px; color:#4b6b7a; margin-bottom:10px;'>Select dates to see available room counts (by room type).</div>");
-        // --- Income Summary (Today + This Month) ---
+
         out.println("<div style='margin:10px 0 14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;'>");
 
         out.println("  <div style='padding:12px; border:1px solid #cfeaff; border-radius:12px; background:#ffffff;'>");
@@ -166,6 +173,7 @@ public class DashboardServlet extends HttpServlet {
         out.println("    </div>");
         out.println("    <div style='font-size:12px; color:#4b6b7a;'>Sum of payments received today</div>");
         out.println("  </div>");
+
         out.println("      <div style='display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;'>");
         out.println("        <div>");
         out.println("          <div style='font-size:12px; margin-bottom:4px;'>Check-In</div>");
@@ -249,11 +257,10 @@ public class DashboardServlet extends HttpServlet {
         out.println("    loadAvailability();");
         out.println("    document.getElementById('dashCheckBtn').addEventListener('click', loadAvailability);");
 
-        out.println("  }, 250);"); // wait a bit for app.js layout
+        out.println("  }, 250);");
         out.println("});");
         out.println("</script>");
 
         out.println("</body></html>");
-
     }
 }
